@@ -29,12 +29,7 @@ class Observability:
 
         user_id = self._user_id
 
-        data = {
-            "response": response.response,
-            "source_nodes": []
-        }
-
-        data['user_id'] = user_id
+        data = {'user_id': user_id, "response": response.response, "source_nodes": []}
 
         cons = ''
         for node in response.source_nodes:
