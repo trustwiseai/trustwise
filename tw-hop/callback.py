@@ -100,6 +100,19 @@ class TWCallbackHandler(BaseCallbackHandler):
             trace_map: Optional[Dict[str, List[str]]] = None,
     ) -> None:
         if trace_id == "query":
+            payload = {
+                "trace_type": trace_id,
+                "events": self._event_pairs,
+                "user_id": self._user_id
+            }
+
+            response = requests.post(url=config.mongodb_logging_url, json=payload)
+            
+            if response.status_code == 200:
+                response_json = response.json()
+                logging.info(msg=response_json['message'])
+            
+            '''
             for event in self._event_pairs:
                 mongo_url = "mongodb+srv://nihal:Pixel@sys-record.idbjhbn.mongodb.net/"  # TODO make an API call
                 client = pymongo.MongoClient(mongo_url)
@@ -110,10 +123,25 @@ class TWCallbackHandler(BaseCallbackHandler):
                 insert_result = collection.insert_one(data)
                 if insert_result.acknowledged:
                     logging.info(msg="Query events logged to Database")
-
+            '''
         if trace_id == "index_construction":
             if self._user_id is None:
                 raise Exception("User ID Problems")
+            
+            payload = {
+                "trace_type": trace_id,
+                "events": self._event_pairs,
+                "user_id": self._user_id
+            }
+
+            response = requests.post(url=config.mongodb_logging_url, json=payload)
+            
+            if response.status_code == 200:
+                response_json = response.json()
+                logging.info(msg=response_json['message'])
+            
+
+            '''
             for event in self._event_pairs:
                 mongo_url = "mongodb+srv://nihal:Pixel@sys-record.idbjhbn.mongodb.net/"  # TODO make an API call
                 client = pymongo.MongoClient(mongo_url)
@@ -124,7 +152,7 @@ class TWCallbackHandler(BaseCallbackHandler):
                 insert_result = collection.insert_one(data)
                 if insert_result.acknowledged:
                     logging.info(msg="Index events logged to Database")
-
+            '''
     def on_event_start(
             self,
             event_type: CBEventType,
