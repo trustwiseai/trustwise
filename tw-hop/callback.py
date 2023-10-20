@@ -1,10 +1,11 @@
 import uuid
 import requests
 import config
+import logging
+import pymongo
+import pandas as pd
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
-import pandas as pd
-import pymongo
 from llama_index.callbacks.base_handler import BaseCallbackHandler
 from llama_index.callbacks.schema import CBEvent, CBEventType, EventPayload
 
@@ -51,9 +52,19 @@ def validate_api_key(api_key):
     base_validate_url = config.base_validate_url
     headers = {'accept': 'application/json'}
     params = {'api_key': api_key}
-    response = requests.post(base_validate_url, headers=headers, params=params)
-    user_id = response.json()  # TODO handle scenarios when service is down, Add Log Statements.
-    return user_id
+    try:
+        response = requests.post(base_validate_url, headers=headers, params=params)
+
+        if response.status_code == 200:
+            user_id = response.json()
+            return user_id
+        else:
+            logging.error("API Key is invalid!, Please visit -> http://54.144.17.111:8000/github-login")
+            return None
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"API request failed with an exception: {str(e)}")
+        return None
 
 
 class TWCallbackHandler(BaseCallbackHandler):
@@ -70,7 +81,8 @@ class TWCallbackHandler(BaseCallbackHandler):
             self._user_id = validate_api_key(api_key)
             print("API Key is Authenticated!")
         else:
-            raise ValueError("API Key is invalid!")  # TODO Add extra information, about getting a valid API Key
+            logging.error("API Key is invalid!, Please visit -> http://54.144.17.111:8000/github-login")
+            raise ValueError("API Key is invalid!")
 
     def start_trace(self, trace_id: Optional[str] = None) -> None:
         self._event_pairs = []
@@ -95,7 +107,9 @@ class TWCallbackHandler(BaseCallbackHandler):
                 collection = db["log-testing"]
                 data = {'user_id': self._user_id,
                         'event': event}
-                insert_result = collection.insert_one(data)  # TODO Add extra information, Logs and Debugging
+                insert_result = collection.insert_one(data)
+                if insert_result.acknowledged:
+                    logging.info(msg="Query events logged to Database")
 
         if trace_id == "index_construction":
             if self._user_id is None:
@@ -107,7 +121,9 @@ class TWCallbackHandler(BaseCallbackHandler):
                 collection = db["index-log-testing"]
                 data = {'user_id': self._user_id,
                         'event': event}
-                insert_result = collection.insert_one(data)  # TODO Add extra information, Logs and Debugging
+                insert_result = collection.insert_one(data)
+                if insert_result.acknowledged:
+                    logging.info(msg="Index events logged to Database")
 
     def on_event_start(
             self,
@@ -116,7 +132,7 @@ class TWCallbackHandler(BaseCallbackHandler):
             event_id: str = "",
             parent_id: str = "",
             **kwargs: Any,
-    ) -> str:
+    ) -> None:
 
         if payload is not None:
             event = CBEvent(event_type, payload=payload, id_=event_id)
@@ -135,7 +151,7 @@ class TWCallbackHandler(BaseCallbackHandler):
                     "event_type": str(event.event_type.name),
                     "event_id": str(event.id_),
                     "event_payload": load,
-                    "event_time": str(event.time)  # TODO Add extra information, Logs and Debugging
+                    "event_time": str(event.time)
                 })
 
     def on_event_end(
@@ -164,5 +180,5 @@ class TWCallbackHandler(BaseCallbackHandler):
                     "event_type": str(event.event_type.name),
                     "event_id": str(event.id_),
                     "event_payload": load,
-                    "event_time": str(event.time)  # TODO Add extra information, Logs and Debugging
+                    "event_time": str(event.time)
                 })

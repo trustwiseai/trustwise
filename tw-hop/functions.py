@@ -2,6 +2,7 @@ import requests
 import json
 import uuid
 import config
+import logging
 import pandas as pd
 
 
@@ -9,22 +10,34 @@ def validate_api_key(api_key):
     base_validate_url = config.base_validate_url
     headers = {'accept': 'application/json'}
     params = {'api_key': api_key}
-    response = requests.post(base_validate_url, headers=headers, params=params)
-    user_id = response.json()
-    return user_id
+    try:
+        response = requests.post(base_validate_url, headers=headers, params=params)
+
+        if response.status_code == 200:
+            user_id = response.json()
+            return user_id
+        else:
+            logging.error("API Key is invalid!, Please visit -> http://54.144.17.111:8000/github-login")
+            return None
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"API request failed with an exception: {str(e)}")
+        return None
 
 
 class Observability:
 
-    # TODO add a docstring for this function
+    def __init__(self):
+        self._user_id = None
+
     def set_api_key(self, api_key: str):
         if api_key is not None:
             self._user_id = validate_api_key(api_key)
-            print("User Authenticated!")
+            print("API Key is Authenticated!")
         else:
+            logging.error("API Key is invalid!, Please visit -> http://54.144.17.111:8000/github-login")
             raise ValueError("API Key is invalid!")
 
-    # TODO add a docstring for this function
     def evaluate(self, query, response):
 
         user_id = self._user_id
@@ -65,8 +78,13 @@ class Observability:
         headers = {'accept': 'application/json'}
         res = requests.post(url, headers=headers, data=json_data, json=None)
 
-        dat = res.json()
-        df = pd.DataFrame(dat)
-        print("")
-        print("Results:")
-        return df
+        if res.status_code == 200:
+            dat = res.json()
+            df = pd.DataFrame(dat)
+            print("")
+            print("Results:")
+            return df
+
+        else:
+            logging.error(f"Evaluate request failed with status code {response.status_code}, Please try again later.")
+            return None
