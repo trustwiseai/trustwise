@@ -1,2 +1,2 @@
-# tw-hop
+# TW-HOP
 Hallucinations Observability Plugin
