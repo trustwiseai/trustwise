@@ -1,7 +1,7 @@
 import requests
 import json
 import uuid
-import config
+from tw_hop import config
 import logging
 import pandas as pd
 
