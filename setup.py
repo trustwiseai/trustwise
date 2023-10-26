@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="trustwise",
-    version="1.0.1",
+    version="1.0.4",
     description="Hallucinations Observability Plugin",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
@@ -54,7 +54,7 @@ setup(
         'pydantic_core==2.10.1',
         'pymongo==4.5.0',
         'python-dateutil==2.8.2',
-        'pypdf==3.16.4'
+        'pypdf==3.16.4',
         'pytz==2023.3.post1',
         'PyYAML==6.0.1',
         'regex==2023.10.3',
