@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="tw-hop",
+    name="trustwise",
     version="1.0.1",
     description="Hallucinations Observability Plugin",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    author="Nihal Bhatnagar",
+    author="Trustwise",
     author_email="nihal@trustwise.ai",
     url="https://github.com/tw-gtm/tw-hop",
     packages=find_packages(),
