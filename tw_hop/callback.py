@@ -1,6 +1,6 @@
 import uuid
 import requests
-import config
+from tw_hop import config
 import logging
 import pymongo
 import pandas as pd
