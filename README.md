@@ -53,7 +53,7 @@ observe.set_api_key(tw_api_key)
 results = observe.evaluate(query, response)
 ```
 ### Trustwise API Key
-Get your API Key -> 
+Get your API Key -> http://api.trustwise.ai:8080/github-login
 
 ## Contributing
 We welcome contributions! If you find a bug, have a feature request, or want to contribute code, please create an issue or submit a pull request.
