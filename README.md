@@ -4,10 +4,10 @@ The Trustwise Safety Module is a Python package designed to evaluate the RAG pip
 
 ## Installation
 
-Install the Safety Module using pip:
+Install the Trustwise Safety Module using pip:
 
 ```python
-pip install safety
+pip install trustwise
 ```
 
 ## Features
