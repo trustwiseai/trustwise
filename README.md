@@ -12,11 +12,11 @@ pip install safety
 
 ## Features
 
-Evaluate RAG pipelines of an LLM.
-Aggregated Safety Score calculation.
-Event logging during query and index construction.
-Backend storage in MongoDB.
-Support for bulk scanning of responses from LLMs.
+1. Evaluate RAG pipelines of an LLM.
+2. Aggregated Safety Score calculation.
+3. Event logging during query and index construction.
+4. Backend storage in MongoDB.
+5. Support for bulk scanning of responses from LLMs.
 
 ## Usage with Llama Index
 
@@ -52,6 +52,8 @@ observe.set_api_key(tw_api_key)
 
 results = observe.evaluate(query, response)
 ```
+### Trustwise API Key
+Get your API Key -> 
 
 ## Contributing
 We welcome contributions! If you find a bug, have a feature request, or want to contribute code, please create an issue or submit a pull request.
