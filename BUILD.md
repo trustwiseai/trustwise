@@ -17,9 +17,9 @@ python setup.py sdist bdist_wheel
 pip install twine
 ```
 
-## Upload your package to `testpypi`
+## Upload your package to `pypi`
 ```sh
-python -m twine upload --repository testpypi dist/*
+python -m twine upload dist/*
 ```
 
 # Check installation of Trustwise package
@@ -35,15 +35,15 @@ source venv/bin/activate
 ## Install the package
 
 ```sh
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple tw-hop==1.0.1
+pip install trustwise
 ```
 
 ## Test the imports in a Jupyter notebook
 
 ```python
 
-from tw_hop.callback import TWCallbackHandler
-from tw_hop import functions
+from trustwise.callback import TrustwiseCallbackHandler
+from trustwise.request import request_eval
 
 ```
-If the above imports work fine, then you have successfully installed `tw-hop`.
+If the above imports work fine, then you have successfully installed `trustwise`.
