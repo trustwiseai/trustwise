@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name="trustwise",
-    version="2.0.0",
+    version="2.1.0",
     description="Trustwise PyPi Package",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     author="Trustwise",
     author_email="nihal@trustwise.ai",
-    url="https://github.com/tw-gtm/tw-hop",
+    url="https://github.com/trustwiseai/trustwise",
     packages=find_packages(),
     classifiers=[
         "License :: OSI Approved :: MIT License",
@@ -32,10 +32,13 @@ setup(
         'distro==1.9.0',
         'frozenlist==1.4.1',
         'fsspec==2023.12.2',
+        'docutils==0.20.1'
         'greenlet==3.0.3',
         'h11==0.14.0',
         'httpcore==1.0.2',
         'httpx==0.26.0',
+        'importlib-metadata==7.0.1',
+        'jaraco.classes==3.3.0',
         'idna==3.6',
         'joblib==1.3.2',
         'llama-index==0.9.36',
@@ -51,7 +54,9 @@ setup(
         'pandas==2.2.0',
         'pydantic==2.5.3',
         'pydantic_core==2.14.6',
+        'Pygments==2.17.2'
         'python-dateutil==2.8.2',
+        'python-dotenv==1.0.1'
         'pytz==2023.3.post1',
         'regex==2023.12.25',
         'requests==2.31.0',
@@ -66,5 +71,6 @@ setup(
         'tzdata==2023.4',
         'urllib3==2.1.0',
         'wrapt==1.16.0',
-        'yarl==1.9.4'
+        'yarl==1.9.4',
+        'zipp==3.17.0'
     ],)

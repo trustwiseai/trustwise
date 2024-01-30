@@ -1,7 +1,10 @@
+import os
 import time
 import random
 import logging
 import requests
+import utils
+from dotenv import load_dotenv
 from datetime import datetime
 from pydantic import BaseModel
 from collections import defaultdict
@@ -15,6 +18,9 @@ from llama_index.callbacks.schema import (
     EventStats,
 )
 
+# Load Environment
+load_dotenv()
+
 
 class LoggingPayload(BaseModel):  # Pydantic Model for Events Data to be logged to MongoDB
     user_id: int
@@ -25,25 +31,6 @@ class LoggingPayload(BaseModel):  # Pydantic Model for Events Data to be logged 
     event_id: str
     event_time: str
     event_payload: str
-
-
-def validate_api_key(api_key):
-    base_validate_url = "http://34.145.241.196:8080/validate_tw_key"
-    headers = {'accept': 'application/json'}
-    params = {'api_key': api_key}
-    try:
-        response = requests.post(base_validate_url, headers=headers, params=params)
-
-        if response.status_code == 200:
-            user_id = response.json()
-            return user_id
-        else:
-            logging.error("API Key is invalid!, Please visit -> http://34.145.241.196:8080/github-login")
-            return None
-
-    except requests.exceptions.RequestException as e:
-        logging.error(f"API request failed with an exception: {str(e)}")
-        return None
 
 
 class TrustwiseCallbackHandler(BaseCallbackHandler):
@@ -110,10 +97,10 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
 
     def set_api_key(self, api_key: str):
         if api_key is not None:
-            self._user_id = validate_api_key(api_key)
+            self._user_id = utils.validate_api_key(api_key)
             print(f"API Key is Authenticated! - User ID : {self._user_id}")
         else:
-            logging.error("API Key is invalid!, Please visit -> http://34.145.241.196:8080/github-login")
+            logging.error(f"API Key is invalid!, Please visit -> {os.getenv('github_login_url')}")
             raise ValueError("API Key is invalid!")
 
     def on_event_start(
@@ -182,7 +169,7 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
             )
 
             payload_dict = payload.model_dump()  # Convert to dict for JSON serialization
-            response = requests.post(url="http://api.trustwise.ai/safety/v2/log_events", json=payload_dict)
+            response = requests.post(url=os.getenv('log_events_url'), json=payload_dict)
             response.raise_for_status()  # Raise HTTPError for bad responses
 
             logging.info("Event logged to MongoDB Successfully")
