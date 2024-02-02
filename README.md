@@ -45,8 +45,6 @@ experiment_id = tw_callback.set_experiment_id()
 
 ###### Evaluate LLM responses #######
 
-from trustwise.functions import Observability
-
 scores = request_eval(api_key=tw_api_key,experiment_id=experiment_id, query=query, response=response)
 print(scores)
 ```
