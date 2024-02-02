@@ -3,10 +3,10 @@ import time
 import random
 import logging
 import requests
-import utils
+from trustwise.utils import validate_api_key
+from trustwise.dtos.models import LoggingPayload
 from dotenv import load_dotenv
 from datetime import datetime
-from pydantic import BaseModel
 from collections import defaultdict
 from typing import Any, Dict, List, Optional
 from llama_index.callbacks.base_handler import BaseCallbackHandler
@@ -20,17 +20,6 @@ from llama_index.callbacks.schema import (
 
 # Load Environment
 load_dotenv()
-
-
-class LoggingPayload(BaseModel):  # Pydantic Model for Events Data to be logged to MongoDB
-    user_id: int
-    experiment_id: str
-    trace_type: str
-    event_type: str
-    parent_id: Optional[str] = ""
-    event_id: str
-    event_time: str
-    event_payload: str
 
 
 class TrustwiseCallbackHandler(BaseCallbackHandler):
@@ -76,7 +65,11 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
             event_ends_to_ignore=event_ends_to_ignore,
         )
 
-    def set_experiment_id(self):  # Function to generate unique experiment id
+    def set_experiment_id(self):
+        """
+        Function to generate unique experiment id
+        :return: unique_id
+        """
         # Get the current timestamp
         timestamp = int(time.time() * 1000)  # Multiply by 1000 to get milliseconds
 
@@ -96,8 +89,13 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
         return unique_id
 
     def set_api_key(self, api_key: str):
+        """
+        Function to set user API Key in the callback and returns User ID
+        :param api_key: Trustwise API Key
+        :return: None
+        """
         if api_key is not None:
-            self._user_id = utils.validate_api_key(api_key)
+            self._user_id = validate_api_key(api_key)
             print(f"API Key is Authenticated! - User ID : {self._user_id}")
         else:
             logging.error(f"API Key is invalid!, Please visit -> {os.getenv('github_login_url')}")
@@ -156,6 +154,12 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
 
     # Function to log events to MongoDB
     def log_to_mongodb(self, event: CBEvent, parent_id: str = "") -> None:
+        """
+
+        :param event: Callback Event from Llama Index to be stored in the logs
+        :param parent_id: Parent event ID, if the event is a parent then 'root'
+        :return:
+        """
         try:
             payload = LoggingPayload(
                 user_id=self._user_id,

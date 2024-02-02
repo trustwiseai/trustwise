@@ -8,7 +8,7 @@ load_dotenv()
 
 
 def validate_api_key(api_key):
-    base_validate_url = os.getenv("validate_key_url")
+    base_validate_url = os.getenv('validate_key_url')
     headers = {'accept': 'application/json'}
     params = {'api_key': api_key}
     try:
