@@ -49,7 +49,7 @@ scores = request_eval(api_key=tw_api_key,experiment_id=experiment_id, query=quer
 print(scores)
 ```
 ### 🔐 Trustwise API Key
-Get your API Key by logging in through Github -> [link](http://35.199.62.235/:8080/github-login)
+Get your API Key by logging in through Github -> [link](http://35.199.62.235:8080/github-login)
 
 ## Contributing
 We welcome contributions! If you find a bug, have a feature request, or want to contribute code, please create an issue or submit a pull request.
