@@ -1,6 +1,7 @@
 import os
 import requests
 import logging
+from ratelimit import limits, sleep_and_retry
 from trustwise.dtos.models import Chunk, UploadData
 from trustwise.utils import validate_api_key
 
@@ -8,6 +9,14 @@ logging.basicConfig()  # Add logging level here if you plan on using logging.inf
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+# Define the rate limit (e.g., 3 requests per 30 seconds)
+@sleep_and_retry
+@limits(calls=3, period=30)
+def send_request(url, data_dict):
+    response_object = requests.post(url, json=data_dict)
+    return response_object
 
 
 def request_eval(api_key, experiment_id, query, response):
@@ -21,7 +30,7 @@ def request_eval(api_key, experiment_id, query, response):
         raise ValueError("API Key is invalid!")
 
     # Evaluation URL
-    url = os.getenv('evaluation_url')
+    eval_url = os.getenv('evaluation_url')
 
     context_aggregated = ''  # Context retrieved from the RAG pipeline to be stored as a string for evaluations
     context = []  # Context chunks to be logged in the record with text, score and node id.
@@ -41,7 +50,7 @@ def request_eval(api_key, experiment_id, query, response):
 
     try:
         data_dict = data.model_dump()  # Convert to dict for JSON serialization
-        response_object = requests.post(url, json=data_dict)
+        response_object = send_request(url=eval_url, json=data_dict)
         response_object.raise_for_status()  # Check for HTTP errors
 
         # Check if the response has a valid JSON content type

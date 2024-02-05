@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="trustwise",
-    version="2.1.0",
+    version="2.1.11",
     description="Trustwise PyPi Package",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
@@ -58,6 +58,7 @@ setup(
         'python-dateutil==2.8.2',
         'python-dotenv==1.0.1'
         'pytz==2023.3.post1',
+        'ratelimit==2.2.1',
         'regex==2023.12.25',
         'requests==2.31.0',
         'six==1.16.0',
