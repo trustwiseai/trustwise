@@ -2,7 +2,7 @@ import os
 import requests
 import logging
 from ratelimit import limits, sleep_and_retry
-from trustwise.dtos.models import Chunk, UploadData
+from trustwise.models import Chunk, UploadData
 from trustwise.utils import validate_api_key
 
 logging.basicConfig()  # Add logging level here if you plan on using logging.info() instead of my_logger as below.
@@ -50,7 +50,7 @@ def request_eval(api_key, experiment_id, query, response):
 
     try:
         data_dict = data.model_dump()  # Convert to dict for JSON serialization
-        response_object = send_request(url=eval_url, json=data_dict)
+        response_object = send_request(url=eval_url, data_dict=data_dict)
         response_object.raise_for_status()  # Check for HTTP errors
 
         # Check if the response has a valid JSON content type

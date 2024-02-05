@@ -4,7 +4,7 @@ import random
 import logging
 import requests
 from trustwise.utils import validate_api_key
-from trustwise.dtos.models import LoggingPayload
+from trustwise.models import LoggingPayload
 from dotenv import load_dotenv
 from datetime import datetime
 from collections import defaultdict

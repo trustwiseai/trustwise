@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name="trustwise",
-    version="2.1.11",
+    version="2.1.13",
     description="Trustwise PyPi Package",
-    long_description=open('README.md').read(),
+    long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type="text/markdown",
     author="Trustwise",
     author_email="nihal@trustwise.ai",
@@ -32,7 +32,7 @@ setup(
         'distro==1.9.0',
         'frozenlist==1.4.1',
         'fsspec==2023.12.2',
-        'docutils==0.20.1'
+        'docutils==0.20.1',
         'greenlet==3.0.3',
         'h11==0.14.0',
         'httpcore==1.0.2',
@@ -54,9 +54,9 @@ setup(
         'pandas==2.2.0',
         'pydantic==2.5.3',
         'pydantic_core==2.14.6',
-        'Pygments==2.17.2'
+        'Pygments==2.17.2',
         'python-dateutil==2.8.2',
-        'python-dotenv==1.0.1'
+        'python-dotenv==1.0.1',
         'pytz==2023.3.post1',
         'ratelimit==2.2.1',
         'regex==2023.12.25',
