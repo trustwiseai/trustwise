@@ -14,7 +14,7 @@ class UploadData(BaseModel):  # Pydantic Model for data uploaded to the Evaluati
     query: str
     context: List[Chunk]
     response: str
-    api_key: str
+    api_key: Optional[str]
     # context_aggregated: str  # Context as a single string
 
 
