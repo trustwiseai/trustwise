@@ -27,13 +27,14 @@ from trustwise.callback import TrustwiseCallbackHandler
 from trustwise.request import request_eval
 
 # Initialise Trustwise Callback Handler
-tw_callback = TrustwiseCallbackHandler()
+
+user_id = "Enter your User ID"
+experiment_id = "Enter your experiment ID"
+
+tw_callback = TrustwiseCallbackHandler(user_id=user_id, experiment_id=experiment_id)
 
 # Configure the Handler with LlamaIndex Callback Manager
 callback_manager = CallbackManager([tw_callback])
-
-# Enter Trustwise API Key
-tw_api_key = 'TRUSTWISE_API_KEY'
 
 # Rest of the llamaindex code like indexing, llm response generation comes here
 
