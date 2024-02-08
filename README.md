@@ -22,11 +22,15 @@ pip install trustwise
 
 ```python
 
-from trustwise.callback import TWCallbackHandler
-from llama_index.callbacks import CallbackManager, LlamaDebugHandler
+from llama_index.callbacks import CallbackManager
+from trustwise.callback import TrustwiseCallbackHandler
+from trustwise.request import request_eval
 
-# Initialize Trustwise CallbackHandler
-tw_callback = TWCallbackHandler()
+# Initialise Trustwise Callback Handler
+tw_callback = TrustwiseCallbackHandler()
+
+# Configure the Handler with LlamaIndex Callback Manager
+callback_manager = CallbackManager([tw_callback])
 
 # Enter Trustwise API Key
 tw_api_key = 'TRUSTWISE_API_KEY'
@@ -34,26 +38,18 @@ tw_api_key = 'TRUSTWISE_API_KEY'
 # Set the API key using the set_api_key method
 tw_callback.set_api_key(tw_api_key)
 
-# Initialize LlamaDebugHandler object
-llama_debug = LlamaDebugHandler(print_trace_on_end=True)
-
-# Include Trustwise CallbackHandler in the LlamaIndex callback manager
-tw_callback_manager = CallbackManager([llama_debug, tw_callback])
+# Initialise Experiment ID for tracking scans and events
+experiment_id = tw_callback.set_experiment_id()
 
 # Rest of the llamaindex code like indexing, llm response generation comes here
 
 ###### Evaluate LLM responses #######
 
-from trustwise.functions import Observability
-
-observe = Observability()
-
-observe.set_api_key(tw_api_key)
-
-results = observe.evaluate(query, response)
+scores = request_eval(api_key=tw_api_key,experiment_id=experiment_id, query=query, response=response)
+print(scores)
 ```
 ### 🔐 Trustwise API Key
-Get your API Key by logging in through Github -> [link](http://api.trustwise.ai:8080/github-login)
+Get your API Key by logging in through Github -> [link](http://35.199.62.235:8080/github-login)
 
 ## Contributing
 We welcome contributions! If you find a bug, have a feature request, or want to contribute code, please create an issue or submit a pull request.
