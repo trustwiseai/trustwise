@@ -9,7 +9,12 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def request_eval(user_id, experiment_id, query, response, api_key=None):
+# earlier in file, import required packages
+from llama_index.core.response.schema import PydanticResponse
+from typing import Optional, Any
+# later on...
+
+def evaluate(user_id: str, experiment_id: str, query: str, response: PydanticResponse, api_key: Optional[str]=None) -> Any:
 
     context = []  # Context chunks to be logged in the record with text, score and node id.
 
