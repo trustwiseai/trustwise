@@ -15,7 +15,6 @@ class UploadData(BaseModel):  # Pydantic Model for data uploaded to the Evaluati
     context: List[Chunk]
     response: str
     api_key: Optional[str]
-    # context_aggregated: str  # Context as a single string
 
 
 class LoggingPayload(BaseModel):  # Pydantic Model for Events Data to be logged to MongoDB

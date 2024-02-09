@@ -4,19 +4,16 @@ from trustwise.models import Chunk, UploadData
 from trustwise.config import TW_EVALUATION_URL
 
 
-logging.basicConfig()  # Add logging level here if you plan on using logging.info() instead of my_logger as below.
-
+logging.basicConfig()  
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 def request_eval(user_id, experiment_id, query, response, api_key=None):
 
-    # context_aggregated = ''  # Context retrieved from the RAG pipeline to be stored as a string for evaluations
     context = []  # Context chunks to be logged in the record with text, score and node id.
 
     for node in response.source_nodes:
-        # context_aggregated += node.text
         node_text = node.text
         node_score = node.score
         node_id = node.id_
@@ -30,7 +27,7 @@ def request_eval(user_id, experiment_id, query, response, api_key=None):
 
     try:
         data_dict = data.model_dump()  # Convert to dict for JSON serialization
-        response_object = requests.post(url=TW_EVALUATION_URL, json=data_dict)
+        response_object = requests.post(url=TW_EVALUATION_URL, json=data_dict, timeout=600)
         response_object.raise_for_status()  # Check for HTTP errors
 
         # Check if the response has a valid JSON content type
