@@ -229,7 +229,7 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
         if event_pair:
             time_stats = self._get_time_stats_from_event_pairs([event_pair])
             indent = " " * level * 2
-            logger.trace(
+            print(
                 f"{indent}|_{event_pair[0].event_type} -> ",
                 f"{time_stats.total_secs} seconds",
                 flush=True,
@@ -241,10 +241,10 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
 
     def print_trace_map(self) -> None:
         """Print simple trace map to terminal for debugging of the most recent trace."""
-        logger.trace("*" * 15, flush=True)
-        logger.trace(f"Trace: {self._cur_trace_id}", flush=True)
+        print("*" * 15, flush=True)
+        print(f"Trace: {self._cur_trace_id}", flush=True)
         self._print_trace_map(BASE_TRACE_EVENT, level=1)
-        logger.trace("*" * 15, flush=True)
+        print("*" * 15, flush=True)
 
     @property
     def event_pairs_by_type(self) -> Dict[CBEventType, List[CBEvent]]:
