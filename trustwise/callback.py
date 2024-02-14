@@ -1,11 +1,7 @@
-import os
-import time
-import random
 import logging
 import requests
-from trustwise.utils import validate_api_key
 from trustwise.models import LoggingPayload
-from dotenv import load_dotenv
+from trustwise.config import TW_LOG_EVENTS_URL
 from datetime import datetime
 from collections import defaultdict
 from typing import Any, Dict, List, Optional
@@ -18,10 +14,14 @@ from llama_index.callbacks.schema import (
     EventStats,
 )
 
-# Load Environment
-load_dotenv()
+logging.basicConfig()  # Add logging level here if you plan on using logging.info() instead of my_logger as below.
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
+# TODO Refactor the callback to inherit from BaseCallback from Llama Index
+# TODO Refactor to remove redundant functionalities copied from Llama Debug
 class TrustwiseCallbackHandler(BaseCallbackHandler):
     """Trustwise Callback handler that keeps log of events and event info.
 
@@ -42,14 +42,15 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
 
     def __init__(
             self,
+            user_id: str,
+            experiment_id: str,
             event_starts_to_ignore: Optional[List[CBEventType]] = None,
             event_ends_to_ignore: Optional[List[CBEventType]] = None,
             print_trace_on_end: bool = True,
     ) -> None:
         """Initialize the Trustwise Callback handler."""
-
-        self._user_id = None
-        self.experiment_id = None
+        self.user_id = user_id
+        self.experiment_id = experiment_id
         self._event_pairs_by_type: Dict[CBEventType, List[CBEvent]] = defaultdict(list)
         self._event_pairs_by_id: Dict[str, List[CBEvent]] = defaultdict(list)
         self._sequential_events: List[CBEvent] = []
@@ -64,42 +65,6 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
             event_starts_to_ignore=event_starts_to_ignore,
             event_ends_to_ignore=event_ends_to_ignore,
         )
-
-    def set_experiment_id(self):
-        """
-        Function to generate unique experiment id
-        :return: unique_id
-        """
-        # Get the current timestamp
-        timestamp = int(time.time() * 1000)  # Multiply by 1000 to get milliseconds
-
-        # Generate a random component
-        random_part = random.randint(100000, 999999)  # 6-digit random number
-
-        # Combine timestamp and random component
-        unique_id = f"{timestamp}{random_part}"
-
-        unique_id = unique_id[:8]  # Ensure it is exactly 8 digits
-        self.experiment_id = unique_id  # Set experiment id
-
-        # User reminder to note experiment id
-        print("Please keep a note of your Experiment ID:", self.experiment_id)
-        logging.info(f"Experiment ID : {self.experiment_id}")
-
-        return unique_id
-
-    def set_api_key(self, api_key: str):
-        """
-        Function to set user API Key in the callback and returns User ID
-        :param api_key: Trustwise API Key
-        :return: None
-        """
-        if api_key is not None:
-            self._user_id = validate_api_key(api_key)
-            print(f"API Key is Authenticated! - User ID : {self._user_id}")
-        else:
-            logging.error(f"API Key is invalid!, Please visit -> {os.getenv('github_login_url')}")
-            raise ValueError("API Key is invalid!")
 
     def on_event_start(
             self,
@@ -162,7 +127,7 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
         """
         try:
             payload = LoggingPayload(
-                user_id=self._user_id,
+                user_id=self.user_id,
                 experiment_id=self.experiment_id,
                 trace_type=self._cur_trace_id,
                 event_type=event.event_type.name,
@@ -173,16 +138,16 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
             )
 
             payload_dict = payload.model_dump()  # Convert to dict for JSON serialization
-            response = requests.post(url=os.getenv('log_events_url'), json=payload_dict)
+            response = requests.post(url=TW_LOG_EVENTS_URL, json=payload_dict)
             response.raise_for_status()  # Raise HTTPError for bad responses
 
-            logging.info("Event logged to MongoDB Successfully")
+            logger.info(f"Event logged to MongoDB Successfully - {event.id_}")
 
         except requests.exceptions.RequestException as e:  # Handle request exceptions
-            logging.error(f"Error logging event to MongoDB: {e}")
+            logger.error(f"Error logging event to MongoDB: {e}")
 
         except Exception as e:
-            logging.error(f"Unexpected error: {e}")  # Handle Unexpected Errors
+            logger.error(f"Unexpected error: {e}")  # Handle Unexpected Errors
 
     def get_events(self, event_type: Optional[CBEventType] = None) -> List[CBEvent]:
         """Get all events for a specific event type."""

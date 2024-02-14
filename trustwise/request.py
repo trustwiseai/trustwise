@@ -1,56 +1,39 @@
-import os
 import requests
 import logging
-from ratelimit import limits, sleep_and_retry
 from trustwise.models import Chunk, UploadData
-from trustwise.utils import validate_api_key
+from trustwise.config import TW_EVALUATION_URL
 
-logging.basicConfig()  # Add logging level here if you plan on using logging.info() instead of my_logger as below.
 
+logging.basicConfig()  
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-# Define the rate limit (e.g., 3 requests per 30 seconds)
-@sleep_and_retry
-@limits(calls=3, period=30)
-def send_request(url, data_dict):
-    response_object = requests.post(url, json=data_dict)
-    return response_object
+# earlier in file, import required packages
+from llama_index.core.response.schema import PydanticResponse
+from typing import Optional, Any
+# later on...
 
 
-def request_eval(api_key, experiment_id, query, response):
+def evaluate(user_id: str, experiment_id: str, query: str, response: PydanticResponse, api_key: Optional[str]=None) -> Any:
 
-    if api_key is not None:
-        user_id = validate_api_key(api_key)
-        print(f"API Key is Authenticated! - User ID : {user_id}")
-        pass
-    else:
-        logging.error(f"API Key is invalid!, Please visit -> {os.getenv('github_login_url')}")
-        raise ValueError("API Key is invalid!")
-
-    # Evaluation URL
-    eval_url = os.getenv('evaluation_url')
-
-    context_aggregated = ''  # Context retrieved from the RAG pipeline to be stored as a string for evaluations
     context = []  # Context chunks to be logged in the record with text, score and node id.
 
     for node in response.source_nodes:
-        context_aggregated += node.text
         node_text = node.text
         node_score = node.score
         node_id = node.id_
 
-        chunk = Chunk(retrieved_node_text=node_text, retrieved_node_score=node_score, retrieved_node_id=node_id)
+        chunk = Chunk(node_text=node_text, node_score=node_score, node_id=node_id)
         context.append(chunk)
 
     # Data to be uploaded to the endpoint for the evaluations to run
     data = UploadData(user_id=user_id, experiment_id=experiment_id, query=query, context=context,
-                      response=response.response, context_aggregated=context_aggregated)
+                      response=response.response, api_key=api_key)
 
     try:
         data_dict = data.model_dump()  # Convert to dict for JSON serialization
-        response_object = send_request(url=eval_url, data_dict=data_dict)
+        response_object = requests.post(url=TW_EVALUATION_URL, json=data_dict, timeout=600)
         response_object.raise_for_status()  # Check for HTTP errors
 
         # Check if the response has a valid JSON content type
