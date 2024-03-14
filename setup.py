@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="trustwise",
-    version="2.2.1",
+    version="2.2.2",
     description="Trustwise PyPi Package",
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type="text/markdown",
