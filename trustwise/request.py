@@ -15,7 +15,7 @@ from typing import Optional, Any
 # later on...
 
 
-def evaluate(user_id: str, experiment_id: str, query: str, response: PydanticResponse, api_key: Optional[str] = None,
+def evaluate(user_id: str, scan_id: str, query: str, response: PydanticResponse, api_key: Optional[str] = None,
              project_id: Optional[str] = None) -> Any:
     context = []  # Context chunks to be logged in the record with text, score and node id.
 
@@ -28,7 +28,7 @@ def evaluate(user_id: str, experiment_id: str, query: str, response: PydanticRes
         context.append(chunk)
 
     # Data to be uploaded to the endpoint for the evaluations to run
-    data = UploadData(user_id=user_id, experiment_id=experiment_id, project_id=project_id, query=query, context=context,
+    data = UploadData(user_id=user_id, scan_id=scan_id, project_id=project_id, query=query, context=context,
                       response=response.response, api_key=api_key)
 
     try:
