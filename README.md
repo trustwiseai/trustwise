@@ -29,9 +29,9 @@ from trustwise.request import request_eval
 # Initialise Trustwise Callback Handler
 
 user_id = "Enter your User ID"
-scan_id = "Enter your experiment ID"
+scan_name = "Enter your Scan Name"
 
-tw_callback = TrustwiseCallbackHandler(user_id=user_id, scan_id=scan_id)
+tw_callback = TrustwiseCallbackHandler(user_id=user_id, scan_name=scan_name)
 
 # Configure the Handler with LlamaIndex Callback Manager
 callback_manager = CallbackManager([tw_callback])
@@ -40,7 +40,7 @@ callback_manager = CallbackManager([tw_callback])
 
 ###### Evaluate LLM responses #######
 
-scores = request_eval(user_id=user_id,scan_id=scan_id, query=query, response=response)
+scores = request_eval(user_id=user_id,scan_name=scan_name, query=query, response=response)
 print(scores)
 ```
 ### 🔐 Trustwise API Key

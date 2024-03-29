@@ -10,7 +10,7 @@ class Chunk(BaseModel):  # Pydantic Model for Retrieved Nodes
 
 class UploadData(BaseModel):  # Pydantic Model for data uploaded to the Evaluation endpoint
     user_id: str
-    scan_id: str
+    scan_name: str
     project_id: Optional[str]
     query: str
     context: List[Chunk]
@@ -20,7 +20,7 @@ class UploadData(BaseModel):  # Pydantic Model for data uploaded to the Evaluati
 
 class LoggingPayload(BaseModel):  # Pydantic Model for Events Data to be logged to MongoDB
     user_id: str
-    scan_id: str
+    scan_name: str
     trace_type: str
     event_type: str
     parent_id: Optional[str] = ""

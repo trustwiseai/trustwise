@@ -43,14 +43,14 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
     def __init__(
             self,
             user_id: str,
-            scan_id: str,
+            scan_name: str,
             event_starts_to_ignore: Optional[List[CBEventType]] = None,
             event_ends_to_ignore: Optional[List[CBEventType]] = None,
             print_trace_on_end: bool = True,
     ) -> None:
         """Initialize the Trustwise Callback handler."""
         self.user_id = user_id
-        self.scan_id = scan_id
+        self.scan_name = scan_name
         self._event_pairs_by_type: Dict[CBEventType, List[CBEvent]] = defaultdict(list)
         self._event_pairs_by_id: Dict[str, List[CBEvent]] = defaultdict(list)
         self._sequential_events: List[CBEvent] = []
@@ -128,7 +128,7 @@ class TrustwiseCallbackHandler(BaseCallbackHandler):
         try:
             payload = LoggingPayload(
                 user_id=self.user_id,
-                scan_id=self.scan_id,
+                scan_name=self.scan_name,
                 trace_type=self._cur_trace_id,
                 event_type=event.event_type.name,
                 parent_id=parent_id if parent_id else event.id_,
