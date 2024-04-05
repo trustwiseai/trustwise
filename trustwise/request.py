@@ -17,7 +17,8 @@ from typing import Optional, Any
 
 def evaluate(user_id: str, scan_id: str, scan_name: str, query: str, response: PydanticResponse,
              api_key: Optional[str] = None,
-             project_id: Optional[str] = None) -> Any:
+             project_id: Optional[str] = None,
+             llm_name: Optional[str] = None) -> Any:
     context = []  # Context chunks to be logged in the record with text, score and node id.
 
     for node in response.source_nodes:
@@ -31,7 +32,7 @@ def evaluate(user_id: str, scan_id: str, scan_name: str, query: str, response: P
     # Data to be uploaded to the endpoint for the evaluations to run
     data = UploadData(user_id=user_id, scan_id=scan_id, scan_name=scan_name, project_id=project_id, query=query,
                       context=context,
-                      response=response.response, api_key=api_key)
+                      response=response.response, api_key=api_key, llm_name=llm_name)
 
     try:
         data_dict = data.model_dump()  # Convert to dict for JSON serialization
